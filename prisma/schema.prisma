@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+
+}
+
+// Store: Model - one store for each account
+model Store{
+  id        String      @id @default(uuid())
+  name      String
+  products  Product[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  users     User[]
+
+}
+//Product : Model 
+// To represent a clothing product in the inventory
+// can have multiple variants
+
+model Product{
+  id            String      @id @default(uuid())
+  storeId       String
+  store         Store       @relation(fields:[storeId],references: [id],onDelete: Cascade)
+  productCode   String      @unique
+  name          String
+  description   String?
+  category      String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  variants      ProductVariant[]
+
+  @@index([storeId])
+}
+
+//Model: ProductVariant - a specific SKU of a product
+//have its own size + color, pricing(cost vs price) and stock
+
+model ProductVariant{
+  id            String        @id @default(uuid())
+  productId     String
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku           String        @unique
+  size          String
+  color         String
+  costPrice     Decimal       @db.Decimal(10,2)
+  price         Decimal       @db.Decimal(10,2)
+  stock         Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  saleItems     SaleItem[]
+  stockLogs     StockLog[]
+
+  @@index([productId])
+}
+
+
+//model : StockLog - track every stock change 
+
+model StockLog {
+  id              String            @id @default(uuid())
+  variantId       String
+  variant         ProductVariant    @relation(fields:[variantId],references: [id],onDelete: Cascade)
+  quantityChange  Int
+  type            StockLogType
+  reason          String?
+  createdAt       DateTime          @default(now())
+
+  @@index([variantId])
+  @@index([createdAt])
+}
+
+enum StockLogType{
+  RESTOCK
+  SALE
+  ADJUSTMENT
+  RETURN
+  DAMAGE
+}
+
+//model: Sale - completed checkout transaction
+model Sale{
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique
+  totalAmount   Decimal       @db.Decimal(10,2)
+  totalCost     Decimal       @db.Decimal(10,2)
+  totalProfit   Decimal       @db.Decimal(10,2)
+  createdAt     DateTime      @default(now())
+  items         SaleItem[]
+
+  @@index([createdAt])
+}
+
+//Saleitem - single item within a sale, catch the prices at the time of sale
+model SaleItem{
+  id            String      @id @default(uuid())
+  saleId        String
+  sale          Sale        @relation(fields: [saleId],references: [id],onDelete: Cascade)
+  variantId     String?
+  variant       ProductVariant?     @relation(fields: [variantId],references: [id],onDelete: SetNull)
+  quantity      Int
+  sellingPrice  Decimal     @db.Decimal(10,2)
+  costPrice     Decimal     @db.Decimal(10,2)
+
+  @@index([saleId])
+  @@index([variantId])
+}
+
+//User for auth.js and authenciation
+enum Role{
+  SUPERADMIN
+  ADMIN
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String?
+  role      Role      @default(ADMIN)
+  storeId   String?
+  store     Store?    @relation(fields: [storeId],references: [id],onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([storeId])
+}
