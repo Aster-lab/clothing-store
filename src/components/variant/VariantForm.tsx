@@ -15,7 +15,7 @@ import {Alert,AlertDescription} from "@/components/ui/alert";
 
 interface CreateVariantFormProps {
     productId : string;
-    cacheKey : any[];
+    cacheKey ?: any[];
     onCloseDialog : () => void;
     onOptimisticAction ?: (variant:any) => void;
     onSuccess?:(realVariant: any) => void;
@@ -62,7 +62,7 @@ export function VariantForm({productId,cacheKey,onCloseDialog,onOptimisticAction
             return;
         }
         startTransition( async()=>{
-            onOptimisticAction({
+            onOptimisticAction?.({
                 id: isEditMode? variant.id :crypto.randomUUID(),
                 sku: isEditMode? variant.sku: "Pending...",
                 size: data.size,
@@ -80,7 +80,7 @@ export function VariantForm({productId,cacheKey,onCloseDialog,onOptimisticAction
             } else {
                 toast.success(isEditMode? "Variant Updated Successfully":
                     `Variant (${data.size.trim().toUpperCase()} - ${data.color.trim().toUpperCase()}) added successfully!`);
-                onSuccess(result.data);
+                onSuccess?.(result.data);
                 formElement.reset();
             }
             sizeInputRef.current?.focus();

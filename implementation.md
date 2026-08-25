@@ -61,3 +61,5 @@ variant/deleteVariantButton
 zod for backend actions
 
 - VariantOptimisticAction
+
+Fix ui of variantData

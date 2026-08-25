@@ -32,7 +32,7 @@ export function VariantHeader({
     onSuccess,
 }:VariantHeaderProps){
     const [isCreateOpen,setIsCreateOpen] = useState(false);
-    const showSearchBar = variants.length>=10;
+    const showSearchBar = variants.length>=3;
 
     return (
     <CardHeader className={variantHeaderStyles.container}>
@@ -81,7 +81,7 @@ export function VariantHeader({
       )}
       <VariantDialog
         productId={productId}
-        cacheKey={cacheKey}
+        cacheKey={["products", productId, "variants"]}
         open={isCreateOpen}
         setOpen={setIsCreateOpen}
         onOptimisticAction={onOptimisticAction}

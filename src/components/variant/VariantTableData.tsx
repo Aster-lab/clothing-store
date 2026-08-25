@@ -15,10 +15,11 @@ import {Loader2} from 'lucide-react';
 
 interface VariantTableDataProps {
   product: any;
-  mutate: any;
+  searchQuery? : string;
+  mutate?: any;
 }
 
-export function VariantTableData({ product, mutate }: VariantTableDataProps) {
+export function VariantTableData({ product, mutate,searchQuery = "" }: VariantTableDataProps) {
   const [variantModelOpen, setVariantModelOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending,startTransition] = useTransition();
@@ -49,11 +50,23 @@ export function VariantTableData({ product, mutate }: VariantTableDataProps) {
             return currentVariants.map((v:any)=>
             v.id === action.variant.id? {...v,...action.variant}:v
           );
-
+            
           default:
             return currentVariants;
         }
         });
+
+  //filter logic
+  const filteredVariants = optimisticVariants.filter((variant:any)=>{
+    if (!searchQuery.trim()) return true;
+
+    const query = searchQuery.toLowerCase();
+    return (
+      variant.sku?.toLowerCase().includes(query) ||
+      variant.size?.toLowerCase().includes(query) ||
+      variant.color?.toLowerCase().includes(query)
+    );
+  });
   
   const [activeVariant,setActiveVariant] = useState<any|null>(null);
 
@@ -77,7 +90,8 @@ export function VariantTableData({ product, mutate }: VariantTableDataProps) {
     return { ...currentResponse, data: updatedProducts };
   }, { revalidate: true }); // Keeps your { revalidate: true } to sync with the server
 };
-  const handleBlur = async(variant: any) =>{
+
+    const handleBlur = async(variant: any) =>{
     const rawValue = typingValues[variant.id];
     if(rawValue === undefined) return;
 
@@ -122,6 +136,8 @@ export function VariantTableData({ product, mutate }: VariantTableDataProps) {
   };
 
 
+
+
   return (
     <>
       <TableRow className={`${tableStyles.subRowWrapper} hover:bg-transparent`}>
@@ -141,7 +157,7 @@ export function VariantTableData({ product, mutate }: VariantTableDataProps) {
             </div>
 
             <Table className="w-full text-left text-xs border-collapse mt-3">
-              {optimisticVariants && optimisticVariants.length>0 && (
+              {filteredVariants && filteredVariants.length>0 && (
               <TableHeader>
                 <TableRow className={`${tableStyles.subTableHeader} hover:bg-transparent`}>
                   <TableHead className="pb-2 font-semibold h-auto px-2">SKU</TableHead>
@@ -155,14 +171,14 @@ export function VariantTableData({ product, mutate }: VariantTableDataProps) {
               )}
 
               <TableBody className="divide-y divide-border/40 text-foreground/80">
-              {!optimisticVariants || optimisticVariants.length === 0 ? (
+              {!filteredVariants || filteredVariants.length === 0 ? (
                 <TableRow className={`${tableStyles.subRowWrapper} hover:bg-transparent`}>
                   <TableCell colSpan={5} className="p-4 bg-card/30 text-center text-xs text-muted-foreground">
-                    No variants found for this product.
+                    {searchQuery ? `No variants matching "${searchQuery}`: "No variants found for this product"}
                   </TableCell>
                 </TableRow>
               ):(
-                optimisticVariants.map((variant: any) => (
+                filteredVariants.map((variant: any) => (
                   <TableRow key={variant.id} className={tableStyles.subTableRow}>
                     <TableCell className="py-2.5 px-2 font-mono text-muted-foreground">{variant.sku}</TableCell>
                     <TableCell className="py-2.5 px-2 font-bold uppercase">{variant.size}</TableCell>

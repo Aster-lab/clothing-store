@@ -12,7 +12,7 @@ import {
 
 interface CreateVariantDialogProps{
     productId: string;
-    cacheKey: any[];
+    cacheKey?: any[];
     open: boolean;
     setOpen: (open: boolean) => void;
     onOptimisticAction?: (variant:any) => void;

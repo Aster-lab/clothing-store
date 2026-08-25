@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import {Suspense} from "react";
 import {getProductbyId} from '@/app/actions/product';
 import {ProductDetails} from "@/components/productDetail/Product/ProductData";
+import {VariantDetails} from "@/components/productDetail/Variant/VariantData";
 import {ThemeToggle} from "@/components/theme-toggle";
 import{notFound} from 'next/navigation';
 import Link from "next/link";
@@ -38,7 +39,7 @@ export default async function ProductDetailPage({params}:ProductPageProps){
       
       {/* Header section with back navigation */}
       <div className={styles.headerWrapper}>
-        <Link href="/(admin)/dashboard/products" className={styles.backLink}>
+        <Link href="/dashboard/products" className={styles.backLink}>
           <ArrowLeft className={styles.backIcon} />
           Back to Products
         </Link>
@@ -89,10 +90,8 @@ export default async function ProductDetailPage({params}:ProductPageProps){
             </CardHeader>
             <CardContent>
               {/* Placeholder for Variant Table */}
-              <div className={styles.placeholderBox}>
-                <span>Variant Table Component</span>
-                <span className={styles.placeholderSubtext}>Will mount here</span>
-              </div>
+              <VariantDetails
+              product = {product}/>
             </CardContent>
           </Card>
         </div>

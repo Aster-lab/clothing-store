@@ -595,3 +595,8 @@ Flow -> user arrives at the page -> extends the productRow -> call VariantTable 
 
 [27/07]
 <Optimizations for editForm>
+----
+
+[25/08]
+<VariantData>
+<product/[id]/page>
