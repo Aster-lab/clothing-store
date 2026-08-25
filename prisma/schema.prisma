@@ -18,9 +18,10 @@ model Store{
   id        String      @id @default(uuid())
   name      String
   products  Product[]
+  users     User[]
+  sales     Sale[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  users     User[]
 
 }
 //Product : Model 
@@ -35,11 +36,20 @@ model Product{
   name          String
   description   String?
   category      String?
+  totalStock    Int         @default(0)
+  price         Decimal     @default(0.00)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   variants      ProductVariant[]
 
   @@index([storeId])
+  @@index([storeId,name])
+  @@index([storeId,category])
+  @@index([storeId,totalStock])
+  @@index([storeId,price])
+  @@unique([id,storeId])
+  @@unique([storeId,productCode])
+
 }
 
 //Model: ProductVariant - a specific SKU of a product
@@ -68,8 +78,8 @@ model ProductVariant{
 
 model StockLog {
   id              String            @id @default(uuid())
-  variantId       String
-  variant         ProductVariant    @relation(fields:[variantId],references: [id],onDelete: Cascade)
+  variantId       String?
+  variant         ProductVariant?    @relation(fields:[variantId],references: [id],onDelete: SetNull)
   quantityChange  Int
   type            StockLogType
   reason          String?
@@ -90,6 +100,8 @@ enum StockLogType{
 //model: Sale - completed checkout transaction
 model Sale{
   id            String        @id @default(uuid())
+  storeId       String
+  store         Store         @relation(fields: [storeId],references: [id],onDelete : Cascade)
   invoiceNumber String        @unique
   totalAmount   Decimal       @db.Decimal(10,2)
   totalCost     Decimal       @db.Decimal(10,2)
@@ -98,6 +110,7 @@ model Sale{
   items         SaleItem[]
 
   @@index([createdAt])
+  @@index([storeId])
 }
 
 //Saleitem - single item within a sale, catch the prices at the time of sale

@@ -10,6 +10,9 @@ export const authStyles = {
     title: 'text-2xl sm:text-3xl font-bold tracking-tight',
     description: 'text-xs sm:test-sm',
 
+    //Theme
+    theme: 'absolute top-4 right-4 z-50',
+
     //Form layouts
     form: 'space-y-4 sm:space-y-6',
     inputGroup: 'space-y-1.5 sm:space-y-2',

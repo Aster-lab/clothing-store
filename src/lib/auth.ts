@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt';
 
 export const {handlers, auth, signIn, signOut} = NextAuth({
     ...authConfig,
+    session: {strategy: 'jwt'},
     providers: [
         Credentials({
             name: 'Credentials',
@@ -36,6 +37,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
                     email: user.email,
                     name: user.name,
                     role: user.role,
+                    storeId: user.storeId,
                 };
             } catch (error){
                 console.error("Authentication error: ", error);
@@ -44,25 +46,4 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
             },      
         }),
     ],
-    callbacks: {
-        ...authConfig.callbacks,
-
-        // Add user data to jwt token
-        async jwt({token,user}) {
-            if(user) {
-                token.id = user.id;
-                token.role = user.role;
-            }
-            return token;
-        },
-
-        // Add user data to session
-        async session({session, token}) {
-            if(token) {
-                session.user.id = token.id as string;
-                session.user.role = token.role as string;
-            }
-            return session;
-        }
-    }
 })
