@@ -1,7 +1,7 @@
 // 📁 src/components/product/VariantTableData.tsx
 "use client";
 
-import { useState ,useTransition,useOptimistic} from "react";
+import { useState ,useTransition,useOptimistic,useMemo} from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { tableStyles } from "@/styles/product";
 import { Layers } from "lucide-react";
@@ -9,6 +9,7 @@ import { updateVariantStock } from "@/app/actions/variant";
 import { VariantDialog } from "./VariantDialog";
 import { DeleteVariantButton } from "./deleteVariantButton";
 import { EditVariantButton } from "./editVariantButton";
+import { variantOptimisticReducer, type VariantOptimisticAction } from "@/types/productdata";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {Input} from "@/components/ui/input";
 import {Loader2} from 'lucide-react';
@@ -25,48 +26,22 @@ export function VariantTableData({ product, mutate,searchQuery = "" }: VariantTa
   const [isPending,startTransition] = useTransition();
   const [typingValues,setTypingValues] = useState<Record<string,string>>({});
 
-  type OptimisticAction = 
-  | {type: "UPDATE_STOCK"; variantId:string;newStock:number}
-  | {type: "DELETE_VARIANT";variantId:string}
-  | {type: "ADD_VARIANT";variant: any}
-  | {type: "UPDATE_VARIANT";variant:any};
-
   const [optimisticVariants,dispatchOptimistic] = useOptimistic(
     product.variants || [],
-    (currentVariants,action: OptimisticAction) =>{
-        switch (action.type) {
-          case 'UPDATE_STOCK':
-            return currentVariants.map((v:any)=>
-            v.id === action.variantId? {...v,stock:action.newStock}:v
-          );
-
-          case "DELETE_VARIANT":
-            return currentVariants.filter((v:any)=> v.id !==action.variantId);
-          
-          case "ADD_VARIANT":
-            return [...currentVariants,action.variant];
-          
-          case "UPDATE_VARIANT":
-            return currentVariants.map((v:any)=>
-            v.id === action.variant.id? {...v,...action.variant}:v
-          );
-            
-          default:
-            return currentVariants;
-        }
-        });
+    variantOptimisticReducer);
 
   //filter logic
-  const filteredVariants = optimisticVariants.filter((variant:any)=>{
-    if (!searchQuery.trim()) return true;
+  const filteredVariants = useMemo(()=>{
+    const query = searchQuery.trim().toLowerCase();
+    if(!query) return optimisticVariants;
 
-    const query = searchQuery.toLowerCase();
-    return (
-      variant.sku?.toLowerCase().includes(query) ||
-      variant.size?.toLowerCase().includes(query) ||
-      variant.color?.toLowerCase().includes(query)
+    return optimisticVariants.filter(
+      (v) =>
+        v.sku?.toLowerCase().includes(query) ||
+        v.color?.toLowerCase().includes(query) ||
+        v.size?.toLowerCase().includes(query) 
     );
-  });
+  },[optimisticVariants,searchQuery])
   
   const [activeVariant,setActiveVariant] = useState<any|null>(null);
 

@@ -19,6 +19,12 @@ export interface ProductData {
   variants: ProductVariant[];
 }
 
+export interface ProductStats{
+  week: number;
+  month: number;
+  year: number;
+}
+
 //Centralized Optimistic action types
 export type VariantOptimisticAction =
   | { type: "UPDATE_STOCK"; variantId: string; newStock: number }

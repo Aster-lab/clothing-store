@@ -6,7 +6,7 @@ import { VariantHeader } from "./VariantHeader";
 import { VariantTableData } from "@/components/variant/VariantTableData";
 import type {ProductData} from "@/types/productdata";
 
-import {Table} from "@/components/ui/table";
+import {Card} from "@/components/ui/card";
 
 interface VariantDataProps {
     product: ProductData;
@@ -18,7 +18,7 @@ export function VariantDetails({product,cacheKey,mutate}:VariantDataProps){
     const [searchQuery,setSearchQuery] = useState("");
 
     return (
-        <Table className = "border border-border/80 rounded-xl bg-card overflow-hidden shadow-sm">
+        <Card className = "border border-border/80 rounded-xl bg-card overflow-hidden shadow-sm">
             <VariantHeader
             productId = {product.id}
             cacheKey = {cacheKey}
@@ -33,6 +33,6 @@ export function VariantDetails({product,cacheKey,mutate}:VariantDataProps){
             searchQuery = {searchQuery}
             mutate = {mutate}
             />
-        </Table> 
+        </Card> 
     )
 }

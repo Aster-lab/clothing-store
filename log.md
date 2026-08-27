@@ -600,3 +600,12 @@ Flow -> user arrives at the page -> extends the productRow -> call VariantTable 
 [25/08]
 <VariantData>
 <product/[id]/page>
+
+[27/08]
+<profit margin>
+components changed
+-New AnayticStyles - styles/productDetails
+- NEW AnalyticsCard - components
+- NEW ProductStats - types/productdata
+- NEW fetchRawProducts and getProductStats - actions/product
+- mount Analytics on [id]/page 

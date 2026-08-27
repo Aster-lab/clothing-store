@@ -1,11 +1,12 @@
 'use server';
 
 import {db} from '@/lib/db';
+import {unstable_cache} from "next/cache";
 import {withStore} from '@/lib/action-utils';
 import {generateVariantSku,serializeProduct} from '@/lib/utils';
 import { syncProductMetrics } from './syncVariant';
 import {revalidatePath} from "next/cache";
-import { abort } from 'process';
+import type { ProductStats } from '@/types/productdata';
 
 //Exact data that frontend will send
 interface CreateProductInput{
@@ -287,3 +288,46 @@ export async function getCategories() {
     return response;
 }
 
+//fetching raw product stats
+export const fetchRawProducts = 
+    async (storeId:string,productId:string) :Promise<ProductStats> =>{
+        const now = new Date();
+        const sevenDays = new Date(now.getTime() - 7*24*60*60*1000);
+        const oneMonth = new Date(now.getTime() - 30*24*60*60*1000);
+        const oneYear = new Date(now.getTime() - 365*24*60*60*1000);
+
+        //raw sql for the case when
+        const result =  await db.$queryRaw<
+            Array<{week: number;month: number;year: number}>
+        >`
+        SELECT
+        COALESCE(SUM(CASE WHEN s."createdAt" >= ${sevenDays} THEN si.quantity ELSE 0 END), 0)::int AS week,
+        COALESCE(SUM(CASE WHEN s."createdAt" >= ${oneMonth} THEN si.quantity ELSE 0 END), 0)::int AS month,
+        COALESCE(SUM(CASE WHEN s."createdAt" >= ${oneYear} THEN si.quantity ELSE 0 END), 0)::int AS year
+        FROM "SaleItem" si
+        INNER JOIN "Sale" s ON si."saleId" = s.id
+        INNER JOIN "ProductVariant" pv ON si."variantId" = pv.id
+        WHERE pv."productId" = ${productId}
+        AND s."storeId" = ${storeId};
+        `;
+        const stats = result[0];
+        return {
+        week: stats?.week || 0,
+        month: stats?.month || 0,
+        year: stats?.year || 0,
+    };
+    }
+
+//get product stats with cahce delay
+export const getProductStats = withStore(
+    async (storeId:string, productId:string): Promise<ProductStats> =>{
+        return unstable_cache(
+            async ()=> fetchRawProducts(storeId,productId),
+            [`product-stats-${storeId}-${productId}`],
+            {
+                revalidate: 300,
+                tags: [`product-stats-${productId}`],
+            }
+        )();
+    }
+);

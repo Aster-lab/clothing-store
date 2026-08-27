@@ -1,8 +1,9 @@
 export const dynamic = "force-dynamic";
 import {Suspense} from "react";
-import {getProductbyId} from '@/app/actions/product';
+import {getProductbyId,getProductStats} from '@/app/actions/product';
 import {ProductDetails} from "@/components/productDetail/Product/ProductData";
 import {VariantDetails} from "@/components/productDetail/Variant/VariantData";
+import { AnalyticsCard } from "@/components/productDetail/AnayticsCard";
 import {ThemeToggle} from "@/components/theme-toggle";
 import{notFound} from 'next/navigation';
 import Link from "next/link";
@@ -19,7 +20,7 @@ import ProductSkeleton from "@/components/productDetail/ProductSkeleton";
 interface ProductPageProps{
     params: Promise<{
         id: string;
-    }>;
+    }> |{id:string};
 }
 
 //Optimizes SEO and browser tab
@@ -31,8 +32,12 @@ export async function generateMetaData({params}:ProductPageProps){
 export default async function ProductDetailPage({params}:ProductPageProps){
     const resolvedParams = await params;
     const id = resolvedParams.id;
-    const product = await getProductbyId(id);
+    const [product,stats] = await Promise.all([
+      getProductbyId(id),
+      getProductStats(id),
+    ]);
     if(!product) notFound();
+    
     
     return (
     <div className={styles.container}>
@@ -61,6 +66,9 @@ export default async function ProductDetailPage({params}:ProductPageProps){
         </div>
       </div>
 
+      {/* KPI */}
+      <AnalyticsCard 
+      variants = {product.varints || []}/>
       {/* Core Split-Screen Layout */}
       <div className={styles.grid}>
         

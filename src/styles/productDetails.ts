@@ -83,3 +83,27 @@ export const variantHeaderStyles = {
   searchInput: "pl-8 pr-8 h-8 text-xs bg-background/60 border-border/80 w-full focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground",
   clearButton: "absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded transition-colors",
 };
+
+// Analytics styles
+export const analyticsStyles = {
+  ///mian grid layout
+  
+container: "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6",
+  card: "bg-card text-card-foreground border-border/60 shadow-sm transition-all duration-200 hover:border-border hover:shadow-md",
+  cardContent: "p-3.5 sm:p-4 flex items-center justify-between gap-2 overflow-hidden",
+  //text styles
+  label: "text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider truncate",
+  metricGroup: "flex flex-wrap items-baseline gap-1.5 sm:gap-2 mt-0.5 sm:mt-1",
+  marginValue: "text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight",
+  subText: "text-[10px] sm:text-[11px] text-muted-foreground font-medium truncate",
+  statValue: "text-lg sm:text-xl font-bold text-foreground mt-0.5 sm:mt-1 tracking-tight",
+  unitText: "text-xs font-normal text-muted-foreground",
+  
+  // Icon
+  iconBadge: {
+    emerald: "p-2 sm:p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0",
+    blue: "p-2 sm:p-2.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0",
+    purple: "p-2 sm:p-2.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 shrink-0",
+    amber: "p-2 sm:p-2.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0",
+  },
+};
