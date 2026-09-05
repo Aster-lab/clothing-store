@@ -19,10 +19,22 @@ export interface ProductData {
   variants: ProductVariant[];
 }
 
+// product stats
 export interface ProductStats{
   week: number;
   month: number;
   year: number;
+}
+
+// stock analysis
+export type StockLevel = "CRITICAL"|"LOW" | "MEDIUM" | "HIGH" | "NO_SALES";
+
+export interface SalesVelocity{
+  daily7d: number;
+  daily30d: number;
+  daysofReStock : number | null;
+  trend : number;
+  stockLevel: StockLevel;
 }
 
 //Centralized Optimistic action types

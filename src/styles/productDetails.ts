@@ -107,3 +107,52 @@ container: "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6",
     amber: "p-2 sm:p-2.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0",
   },
 };
+
+// Sales Velocity Card Styles
+import type {StockLevel} from "@/types/productdata";
+
+export const salesVelocityStyles = {
+  card: "relative overflow-hidden rounded-xl border border-border/80 bg-card p-5 text-card-foreground shadow-sm transition-all duration-200 hover:border-border",
+  header: "flex items-start justify-between gap-2 pb-2",
+  titleGroup: "space-y-1",
+  title: "text-[11px] font-bold uppercase tracking-wider text-muted-foreground",
+  iconWrapper: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 dark:bg-amber-500/20",
+  icon: "h-4 w-4",
+
+  mainMetricRow: "flex flex-wrap items-center justify-between gap-2 py-1",
+  valueGroup: "flex items-baseline gap-1.5",
+  value: "text-2xl font-bold tracking-tight text-foreground sm:text-3xl",
+  unit: "text-xs font-medium text-muted-foreground",
+  subtitle: "text-xs text-muted-foreground",
+
+  // Risk Badges
+  badgeBase: "inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors",
+  badgeCritical: "border-destructive/30 bg-destructive/10 text-destructive dark:bg-destructive/20",
+  badgeHigh: "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 dark:bg-amber-500/20",
+  badgeMedium: "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 dark:bg-emerald-500/20",
+  badgeLow: "border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 dark:bg-blue-500/20",
+  badgeNoSales: "border-transparent bg-muted text-muted-foreground",
+
+  // Responsive Predictive Grid
+  grid: "mt-4 grid grid-cols-1 gap-3 pt-3 border-t border-border/50 sm:grid-cols-2",
+  metricBlock: "space-y-1 min-w-0",
+  metricLabel: "text-[10px] font-semibold uppercase tracking-wider text-muted-foreground",
+  metricValue: "text-sm font-semibold text-foreground truncate",
+  metricMeta: "text-[10px] text-muted-foreground/80 truncate",
+
+  trendGroup: "flex items-center gap-1 text-sm font-semibold",
+  trendUp: "text-emerald-600 dark:text-emerald-400",
+  trendDown: "text-rose-600 dark:text-rose-400",
+  trendNeutral: "text-muted-foreground",
+};
+
+export const RISK_BADGE_STYLES: Record<
+    StockLevel,
+    {label:string,style:string}
+    > = {
+      CRITICAL: {label:"Critical",style:salesVelocityStyles.badgeCritical},
+      LOW: {label:"Low",style:salesVelocityStyles.badgeLow},
+      MEDIUM: {label:"Medium",style:salesVelocityStyles.badgeMedium},
+      HIGH: {label:"High",style:salesVelocityStyles.badgeHigh},
+      NO_SALES: {label:"No Sales",style:salesVelocityStyles.badgeNoSales}
+    } ;

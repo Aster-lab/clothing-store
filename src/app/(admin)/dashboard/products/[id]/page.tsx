@@ -17,6 +17,9 @@ import { Card,
  } from "@/components/ui/card";
 import ProductSkeleton from "@/components/productDetail/ProductSkeleton";
 
+import {calculateSalesVelocity, getProductStock} from "@/lib/utils/salesVelocity";
+import {SalesVelocityCard} from "@/components/productDetail/SalesVelocityCard";
+
 interface ProductPageProps{
     params: Promise<{
         id: string;
@@ -32,12 +35,16 @@ export async function generateMetaData({params}:ProductPageProps){
 export default async function ProductDetailPage({params}:ProductPageProps){
     const resolvedParams = await params;
     const id = resolvedParams.id;
-    const [product,stats] = await Promise.all([
+    const [product,statsResponse] = await Promise.all([
       getProductbyId(id),
       getProductStats(id),
     ]);
     if(!product) notFound();
-    
+
+    const stats = statsResponse?.data || {week:0,month:0,year:0};
+
+    const toalStock = getProductStock(product.variants || []);
+    const salesVelocity = calculateSalesVelocity(toalStock,stats);
     
     return (
     <div className={styles.container}>
@@ -68,7 +75,13 @@ export default async function ProductDetailPage({params}:ProductPageProps){
 
       {/* KPI */}
       <AnalyticsCard 
-      variants = {product.varints || []}/>
+      variants = {product.varints || []}
+      stats = {stats}  
+      />
+      <SalesVelocityCard
+      salesVelocity = {salesVelocity}
+      totalStock = {toalStock}
+      />
       {/* Core Split-Screen Layout */}
       <div className={styles.grid}>
         

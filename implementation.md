@@ -65,7 +65,8 @@ zod for backend actions
 Fix ui of variantData
 
 Features integration
-sales velocity
 mini stock audit log
 bulk actions
 intelligent low-stock thresholds
+
+- stock threshold in salesVelocity

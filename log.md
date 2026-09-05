@@ -608,4 +608,16 @@ components changed
 - NEW AnalyticsCard - components
 - NEW ProductStats - types/productdata
 - NEW fetchRawProducts and getProductStats - actions/product
-- mount Analytics on [id]/page 
+- mount getProductStats,Analytics on [id]/page 
+
+[01/09]
+<Sales Velocity>
+components change
+- NEW StockLevel, SalesVelocity - types/productdata
+- NEW calculateSalesVelocity,RiskEvaluation,getProductStock - lib/utils/salesVelocity
+- NEW SalesVelocityStyles, RISK_BADGE_STYLES - styles/productDetails
+- NEW SalesVelocityCard - components/productDetail
+- NEW salesVelocity.test - tests/unit/salesVelocity
+- mount calculateSalesVelocity, SalesVelocityCard on page
+
+[05/09]
